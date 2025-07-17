@@ -6,34 +6,46 @@
 
 button {
     min-width: 50px;
+}
+
+button,
+#display {
     min-height: 50px;
+}
+
+#container,
+#calculator,
+#buttons {
+    display: flex;
+}
+
+#container,
+#buttons {
+    justify-content: center;
+}
+
+#calculator,
+#buttons {
+    gap: 10px;
 }
 
 #container {
     border: 2px solid orange;
-    display: flex;
-    justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
 #calculator {
-    display: flex;
     flex-direction: column;
-    gap: 10px;
     border: 2px solid red;
 }
 
 #display {
-    min-height: 50px;
     border: 2px solid indigo;
 }
 
 #buttons {
-    display: flex;
     flex-wrap: wrap;
-    gap: 10px;
     width: 250px;
-    justify-content: center;
     border: 2px solid blue;
 }
