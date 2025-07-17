@@ -14,10 +14,6 @@ function divide(num1, num2) {
     return num1 / num2;
 }
 
-let num1;
-let operator;
-let num2;
-
 function operate(num1, operator, num2) {
     if (operator === "+") {
         add(num1, num2);
@@ -29,3 +25,21 @@ function operate(num1, operator, num2) {
         divide(num1, num2);
     };
 };
+
+function populateDisplay() {
+    const buttons = document.querySelectorAll("button");
+    const display = document.querySelector("#display");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", (e) => {
+            const text = e.target.textContent;
+            const num = parseFloat(text);
+
+            if (!isNaN(num)) {
+                display.textContent += e.target.textContent;
+            }
+        })
+    });
+};
+
+populateDisplay();
