@@ -4,18 +4,17 @@
     box-sizing: border-box;
 }
 
-html,
-body {
-    height: 100%;
-    border: 2px solid green;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 button {
     min-width: 50px;
     min-height: 50px;
+}
+
+#container {
+    border: 2px solid orange;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 #calculator {
@@ -27,7 +26,6 @@ button {
 
 #display {
     min-height: 50px;
-    min-width: 250px;
     border: 2px solid indigo;
 }
 
