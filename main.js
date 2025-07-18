@@ -96,6 +96,15 @@ function populateDisplay() {
                 }
             }
 
+            if(/[0]/.test(e.target.textContent)) {
+                const divisionOperatorIndex = display.textContent.lastIndexOf("/")
+
+                if (divisionOperatorIndex !== -1) {
+                    display.textContent = "Error, cant divide by 0!"
+                    toggleOperators(disableOperators = true, disableEquals = true);
+                }
+            }
+
             // Slice everything into variables and calculate
             if (e.target.textContent === "=") {
                 // Find operator in display
