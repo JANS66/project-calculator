@@ -12,6 +12,7 @@ button {
     border: none;
 }
 
+button.active,
 button:active {
     background-color: #f5f5f516;
 }
@@ -30,11 +31,6 @@ button,
     display: flex;
 }
 
-#operator:active,
-#utility:active {
-    background-color: #f5f5f516;
-}
-
 #container,
 #buttons {
     justify-content: center;
@@ -46,7 +42,6 @@ button,
 }
 
 #display {
-    border: 2px solid indigo;
     justify-content: flex-end;
     align-items: flex-end;
     padding: 10px 20px 10px 10px;
@@ -58,27 +53,29 @@ button,
     flex-wrap: wrap-reverse;
     min-width: 250px;
     max-width: 300px;
-    border: 2px solid blue;
     justify-content: space-between;
     padding: 20px;
 }
 
 #container {
-    border: 2px solid orange;
     align-items: center;
     height: 100vh;
 }
 
-#utility {
+#calculator {
+    flex-direction: column;
+}
+
+.operator:active,
+.utility:active {
+    background-color: #f5f5f516;
+}
+
+.utility {
     background-color: dimgray;
     flex: 1;
 }
 
-#calculator {
-    flex-direction: column;
-    border: 2px solid red;
-}
-
-#operator {
+.operator {
     background-color: rgba(255, 166, 0, 0.821)
 }
