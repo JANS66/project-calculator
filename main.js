@@ -69,6 +69,8 @@ function toggleOperators(disableOperators, disableEquals) {
     }
 }
 
+let justEvaluated = false;
+
 function populateDisplay() {
     const display = document.querySelector("#display");
     toggleOperators(disableOperators, disableEquals);
@@ -81,9 +83,10 @@ function populateDisplay() {
 
             if (/[+\-*/]/.test(display.textContent)) {
                 toggleOperators(disableOperators = true, disableEquals = true);
-            } 
+                justEvaluated = false;
+            }
 
-            if(/[0-9]/.test(e.target.textContent)) {
+            if (/[0-9]/.test(e.target.textContent)) {
                 const lastOperatorIndex = Math.max(
                     display.textContent.lastIndexOf("+"),
                     display.textContent.lastIndexOf("-"),
@@ -96,7 +99,7 @@ function populateDisplay() {
                 }
             }
 
-            if(/[0]/.test(e.target.textContent)) {
+            if (/[0]/.test(e.target.textContent)) {
                 const divisionOperatorIndex = display.textContent.lastIndexOf("/")
 
                 if (divisionOperatorIndex !== -1) {
@@ -117,6 +120,7 @@ function populateDisplay() {
                     const num1 = display.textContent.slice(0, operatorIndex);
                     const num2 = display.textContent.slice(operatorIndex + 1, -1);
                     display.textContent = (operate(num1, operator, num2));
+                    justEvaluated = true;
                     toggleOperators(disableOperators = false, disableEquals = true);
                 }
             }
@@ -125,6 +129,17 @@ function populateDisplay() {
             if (e.target.textContent === "CLR") {
                 display.textContent = "";
                 toggleOperators(disableOperators = true, disableEquals = true);
+            }
+
+            // So when user presses digit after his evaluation was done, start new calculation, not append that digit to result
+            if (justEvaluated) {
+                if (/\d/.test(e.target.textContent)) {
+                    display.textContent = e.target.textContent;
+                    justEvaluated = false;
+                    return;
+                } else if (/[+\-*]/.test(e.target.textContent)) {
+                    justEvaluated = false;
+                }
             }
         })
     });
