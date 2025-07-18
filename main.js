@@ -1,6 +1,10 @@
 function formatResult(result) {
-    const rounded = Number(result.toFixed(2));
-    return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(2);
+    let str = result.toString();
+
+    if (str.length >= 12) {
+        return Number(str).toFixed(2)
+    }
+    return str;
 }
 
 function add(num1, num2) {
@@ -36,141 +40,95 @@ function operate(num1, operator, num2) {
 };
 
 const buttons = document.querySelectorAll("button");
-
-function toggleButtons(symbols, shouldDisable) {
-    buttons.forEach(button => {
-        if (symbols.includes(button.textContent)) {
-            button.disabled = shouldDisable;
-        }
-    })
-}
-
+const numberButtons = document.querySelectorAll("#number");
+const operatorButtons = document.querySelectorAll("#operator");
+const utilityButtons = document.querySelectorAll("#utility");
+let firstOperand = '';
+let secondOperand = '';
+let operator = '';
 let justEvaluated = false;
 
-function populateDisplay() {
-    const display = document.querySelector("#display");
-    toggleButtons(["/", "*", "-", "+", "="], true);
-    toggleButtons(["."], false);
+numberButtons.forEach(button => {
+    button.addEventListener("click", e => {
+        const digit = e.target.textContent;
 
-    buttons.forEach(button => {
-        button.addEventListener("click", (e) => {
-            buttons.forEach(button => {
-                if (["DEL"].includes(button.textContent)) {
-                    button.disabled = false;
-                }
-            })
+        if (justEvaluated) {
+            display.textContent = e.target.textContent;
+            justEvaluated = false;
+            return;
+        }
 
-            if (justEvaluated) {
-                toggleButtons(["."], false);
-                if (/\d|\./.test(e.target.textContent)) {
-                    display.textContent = e.target.textContent;
-                    justEvaluated = false;
-                    return;
-                } else if (/[+\-*/]/.test(e.target.textContent)) {
-                    justEvaluated = false;
-                }
-            }
-
-            if (display.textContent.length >= 12 && !["DEL", "CLR"].includes(e.target.textContent)) {
-                return;
-            }
-
-            if (e.target.textContent === "DEL") {
-                const lastChar = display.textContent.slice(-1);
-                if (lastChar === "+" || lastChar === "-" || lastChar === "*" || lastChar === "/") {
-                    toggleButtons(["/", "*", "-", "+"], false);
-                }
-                display.textContent = display.textContent.slice(0, -1);
-                return;
-            }
-
-            display.textContent += e.target.textContent;
-
-            toggleButtons(["/", "*", "-", "+"], false);
-            toggleButtons(["="], true);
-
-            if (/[+\-*/]/.test(display.textContent)) {
-                toggleButtons(["/", "*", "-", "+", "="], true);
-                toggleButtons(["."], false);
-            }
-
-            if (/[0-9]/.test(e.target.textContent)) {
-                const lastOperatorIndex = Math.max(
-                    display.textContent.lastIndexOf("+"),
-                    display.textContent.lastIndexOf("-"),
-                    display.textContent.lastIndexOf("*"),
-                    display.textContent.lastIndexOf("/")
-                );
-
-                if (lastOperatorIndex !== -1) {
-                    toggleButtons(["/", "*", "-", "+"], true);
-                    toggleButtons(["="], false);
-                }
-            }
-
-            let dots = display.textContent.match(/\./g);
-            if (dots && dots.length >= 2) {
-                toggleButtons(["."], true);
-            }
-
-            if (/[\.]/.test(e.target.textContent)) {
-                toggleButtons(["/", "*", "-", "+", "=", "."], true);
-            }
-
-            if (/[0]/.test(display.textContent)) {
-                const divisionOperatorIndex = display.textContent.lastIndexOf("/")
-
-                if (divisionOperatorIndex !== -1) {
-                    display.textContent = "Error, cant divide by 0!";
-                    toggleButtons(["/", "*", "-", "+", "=", "."], true);
-                    justEvaluated = true;
-                    buttons.forEach(button => {
-                        if (["DEL"].includes(button.textContent)) {
-                            button.disabled = true;
-                        }
-                    })
-                }
-            }
-
-            // Slice everything into variables and calculate
-            if (e.target.textContent === "=") {
-                // Find operator in display
-                const operators = ["+", "-", "*", "/"];
-                // Find first operator
-                const operatorIndex = [...display.textContent].findIndex(char => operators.includes(char));
-
-                if (operatorIndex !== -1) {
-                    const operator = display.textContent[operatorIndex];
-                    const num1 = display.textContent.slice(0, operatorIndex);
-                    const num2 = display.textContent.slice(operatorIndex + 1, -1);
-                    display.textContent = (operate(num1, operator, num2));
-                    justEvaluated = true;
-                    toggleButtons(["/", "*", "-", "+", "."], false);
-                    toggleButtons(["="], true);
-                }
-            }
-
-            // Clear everything and disable operators 
-            if (e.target.textContent === "CLR") {
-                display.textContent = "";
-                toggleButtons(["/", "*", "-", "+", "="], true);
-                toggleButtons(["."], false);
-            }
-        })
+        display.textContent += digit;
     });
+})
 
-    document.addEventListener("keydown", (e) => {
-        let key = e.key;
+operatorButtons.forEach(button => {
+    button.addEventListener("click", e => {
+        const clickedOperator = e.target.textContent;
 
-        if (key === "Enter") key = "=";
-        if (key === "Backspace") key = "DEL";
+        if (clickedOperator === "=") {
+            if (operator) {
+                const parts = display.textContent.split(operator);
+                secondOperand = parts[1];
+                if (operator === "/" && Number(secondOperand) === 0) {
+                    display.textContent = "Can't divide by 0!";
+                    operator = '';
+                    justEvaluated = true;
+                    return;
+                }
+                if (firstOperand && secondOperand) {
+                    const result = operate(firstOperand, operator, secondOperand);
+                    display.textContent = result;
+                    firstOperand = result;
+                    operator = '';
+                    secondOperand = '';
+                    justEvaluated = true;
+                }
+            }
+            return;
+        }
 
-        const btn = [...buttons].find(button => button.textContent === key);
-        if (btn) {
-            btn.click();
+        if (!operator) {
+            firstOperand = display.textContent;
+            operator = clickedOperator;
+            display.textContent += operator;
+        } else {
+            const parts = display.textContent.split(operator);
+            secondOperand = parts[1];
+
+            if (firstOperand && secondOperand) {
+                const result = operate(firstOperand, operator, secondOperand);
+                display.textContent = result + clickedOperator;
+                firstOperand = result;
+                operator = clickedOperator;
+                justEvaluated = false;
+            }
         }
     });
-};
+})
 
+utilityButtons.forEach(button => {
+    button.addEventListener("click", e => {
+        const utility = e.target.textContent;
 
-populateDisplay();
+        if (utility === "DEL") {
+            display.textContent = display.textContent.slice(0, -1);
+        }
+
+        if (utility === "CLR") {
+            display.textContent = "";
+        }
+    });
+})
+
+document.addEventListener("keydown", e => {
+    let key = e.key;
+
+    if (key === "Enter") key = "=";
+    if (key === "Backspace") key = "DEL";
+
+    const btn = [...buttons].find(button => button.textContent === key);
+    if (btn) {
+        btn.click();
+    }
+})
