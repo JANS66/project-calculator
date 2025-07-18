@@ -24,6 +24,11 @@ button,
     justify-content: center;
 }
 
+#clear,
+#delete {
+    flex: 1;
+}
+
 #calculator,
 #buttons {
     gap: 10px;
@@ -45,7 +50,10 @@ button,
 }
 
 #buttons {
-    flex-wrap: wrap;
-    width: 250px;
+    flex-wrap: wrap-reverse;
+    min-width: 250px;
+    max-width: 300px;
     border: 2px solid blue;
+    justify-content: space-between;
+    padding: 20px;
 }

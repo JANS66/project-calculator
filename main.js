@@ -38,8 +38,9 @@ function operate(num1, operator, num2) {
 const buttons = document.querySelectorAll("button");
 let disableOperators = true;
 let disableEquals = true;
+let disableDot = false;
 
-function toggleOperators(disableOperators, disableEquals) {
+function toggleOperators(disableOperators, disableEquals, disableDot) {
     if (disableOperators) {
         buttons.forEach(button => {
             if (["+", "-", "/", "*"].includes(button.textContent)) {
@@ -67,23 +68,47 @@ function toggleOperators(disableOperators, disableEquals) {
             }
         })
     }
+
+    if (disableDot) {
+        buttons.forEach(button => {
+            if (["."].includes(button.textContent)) {
+                button.disabled = true;
+            }
+        })
+    } else if (!disableDot) {
+        buttons.forEach(button => {
+            if (["."].includes(button.textContent)) {
+                button.disabled = false;
+            }
+        })
+    }
 }
 
 let justEvaluated = false;
 
 function populateDisplay() {
     const display = document.querySelector("#display");
-    toggleOperators(disableOperators, disableEquals);
+    toggleOperators(disableOperators, disableEquals, disableDot);
 
     buttons.forEach(button => {
         button.addEventListener("click", (e) => {
+            if (justEvaluated) {
+                if (/\d|\./.test(e.target.textContent)) {
+                    display.textContent = e.target.textContent;
+                    justEvaluated = false;
+                    return;
+                } else if (/[+\-*/]/.test(e.target.textContent)) {
+                    justEvaluated = false;
+                }
+            }
+
             display.textContent += e.target.textContent;
 
             toggleOperators(disableOperators = false, disableEquals = true);
 
             if (/[+\-*/]/.test(display.textContent)) {
-                toggleOperators(disableOperators = true, disableEquals = true);
-                justEvaluated = false;
+                toggleOperators(disableOperators = true, disableEquals = true, disableDot = false);
+                // justEvaluated = true;
             }
 
             if (/[0-9]/.test(e.target.textContent)) {
@@ -99,12 +124,22 @@ function populateDisplay() {
                 }
             }
 
-            if (/[0]/.test(e.target.textContent)) {
+            const dots = display.textContent.match(/\./g);
+            if (dots && dots.length >= 2) {
+                toggleOperators(disableOperators, disableEquals, disableDot = true);
+            }
+
+            if (/[\.]/.test(e.target.textContent)) {
+                toggleOperators(disableOperators = true, disableEquals = true, disableDot = true);
+            }
+
+            if (/[0]/.test(display.textContent)) {
                 const divisionOperatorIndex = display.textContent.lastIndexOf("/")
 
                 if (divisionOperatorIndex !== -1) {
                     display.textContent = "Error, cant divide by 0!"
-                    toggleOperators(disableOperators = true, disableEquals = true);
+                    toggleOperators(disableOperators = true, disableEquals = true, disableDot = true);
+                    justEvaluated = true;
                 }
             }
 
@@ -131,16 +166,6 @@ function populateDisplay() {
                 toggleOperators(disableOperators = true, disableEquals = true);
             }
 
-            // So when user presses digit after his evaluation was done, start new calculation, not append that digit to result
-            if (justEvaluated) {
-                if (/\d/.test(e.target.textContent)) {
-                    display.textContent = e.target.textContent;
-                    justEvaluated = false;
-                    return;
-                } else if (/[+\-*]/.test(e.target.textContent)) {
-                    justEvaluated = false;
-                }
-            }
         })
     });
 };
