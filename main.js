@@ -98,7 +98,8 @@ function populateDisplay() {
                     const operator = display.textContent[operatorIndex];
                     const num1 = display.textContent.slice(0, operatorIndex);
                     const num2 = display.textContent.slice(operatorIndex + 1, -1);
-                    display.textContent += (operate(num1, operator, num2));
+                    display.textContent = (operate(num1, operator, num2));
+                    toggleOperators(disableOperators = false, disableEquals = true);
                 }
             }
 
