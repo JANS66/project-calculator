@@ -36,59 +36,21 @@ function operate(num1, operator, num2) {
 };
 
 const buttons = document.querySelectorAll("button");
-let disableOperators = true;
-let disableEquals = true;
-let disableDot = false;
 
-function toggleOperators(disableOperators, disableEquals, disableDot) {
-    if (disableOperators) {
-        buttons.forEach(button => {
-            if (["+", "-", "/", "*"].includes(button.textContent)) {
-                button.disabled = true;
-            }
-        })
-    } else if (!disableOperators) {
-        buttons.forEach(button => {
-            if (["+", "-", "/", "*"].includes(button.textContent)) {
-                button.disabled = false;
-            }
-        })
-    }
-
-    if (disableEquals) {
-        buttons.forEach(button => {
-            if (["="].includes(button.textContent)) {
-                button.disabled = true;
-            }
-        })
-    } else if (!disableEquals) {
-        buttons.forEach(button => {
-            if (["="].includes(button.textContent)) {
-                button.disabled = false;
-            }
-        })
-    }
-
-    if (disableDot) {
-        buttons.forEach(button => {
-            if (["."].includes(button.textContent)) {
-                button.disabled = true;
-            }
-        })
-    } else if (!disableDot) {
-        buttons.forEach(button => {
-            if (["."].includes(button.textContent)) {
-                button.disabled = false;
-            }
-        })
-    }
+function toggleButtons(symbols, shouldDisable) {
+    buttons.forEach(button => {
+        if (symbols.includes(button.textContent)) {
+            button.disabled = shouldDisable;
+        }
+    })
 }
 
 let justEvaluated = false;
 
 function populateDisplay() {
     const display = document.querySelector("#display");
-    toggleOperators(disableOperators, disableEquals, disableDot);
+    toggleButtons(["/", "*", "-", "+", "="], true);
+    toggleButtons(["."], false);
 
     buttons.forEach(button => {
         button.addEventListener("click", (e) => {
@@ -97,7 +59,9 @@ function populateDisplay() {
                     button.disabled = false;
                 }
             })
+
             if (justEvaluated) {
+                toggleButtons(["."], false);
                 if (/\d|\./.test(e.target.textContent)) {
                     display.textContent = e.target.textContent;
                     justEvaluated = false;
@@ -114,7 +78,7 @@ function populateDisplay() {
             if (e.target.textContent === "DEL") {
                 const lastChar = display.textContent.slice(-1);
                 if (lastChar === "+" || lastChar === "-" || lastChar === "*" || lastChar === "/") {
-                    toggleOperators(disableOperators = false, disableEquals, disableDot);
+                    toggleButtons(["/", "*", "-", "+"], false);
                 }
                 display.textContent = display.textContent.slice(0, -1);
                 return;
@@ -122,11 +86,12 @@ function populateDisplay() {
 
             display.textContent += e.target.textContent;
 
-            toggleOperators(disableOperators = false, disableEquals = true);
+            toggleButtons(["/", "*", "-", "+"], false);
+            toggleButtons(["="], true);
 
             if (/[+\-*/]/.test(display.textContent)) {
-                toggleOperators(disableOperators = true, disableEquals = true, disableDot = false);
-                // justEvaluated = true;
+                toggleButtons(["/", "*", "-", "+", "="], true);
+                toggleButtons(["."], false);
             }
 
             if (/[0-9]/.test(e.target.textContent)) {
@@ -138,25 +103,26 @@ function populateDisplay() {
                 );
 
                 if (lastOperatorIndex !== -1) {
-                    toggleOperators(disableOperators = true, disableEquals = false);
+                    toggleButtons(["/", "*", "-", "+"], true);
+                    toggleButtons(["="], false);
                 }
             }
 
-            const dots = display.textContent.match(/\./g);
+            let dots = display.textContent.match(/\./g);
             if (dots && dots.length >= 2) {
-                toggleOperators(disableOperators, disableEquals, disableDot = true);
+                toggleButtons(["."], true);
             }
 
             if (/[\.]/.test(e.target.textContent)) {
-                toggleOperators(disableOperators = true, disableEquals = true, disableDot = true);
+                toggleButtons(["/", "*", "-", "+", "=", "."], true);
             }
 
             if (/[0]/.test(display.textContent)) {
                 const divisionOperatorIndex = display.textContent.lastIndexOf("/")
 
                 if (divisionOperatorIndex !== -1) {
-                    display.textContent = "Error, cant divide by 0!"
-                    toggleOperators(disableOperators = true, disableEquals = true, disableDot = true);
+                    display.textContent = "Error, cant divide by 0!";
+                    toggleButtons(["/", "*", "-", "+", "=", "."], true);
                     justEvaluated = true;
                     buttons.forEach(button => {
                         if (["DEL"].includes(button.textContent)) {
@@ -179,14 +145,16 @@ function populateDisplay() {
                     const num2 = display.textContent.slice(operatorIndex + 1, -1);
                     display.textContent = (operate(num1, operator, num2));
                     justEvaluated = true;
-                    toggleOperators(disableOperators = false, disableEquals = true);
+                    toggleButtons(["/", "*", "-", "+", "."], false);
+                    toggleButtons(["="], true);
                 }
             }
 
-            // Clear everything and enable operators 
+            // Clear everything and disable operators 
             if (e.target.textContent === "CLR") {
                 display.textContent = "";
-                toggleOperators(disableOperators = true, disableEquals = true);
+                toggleButtons(["/", "*", "-", "+", "="], true);
+                toggleButtons(["."], false);
             }
         })
     });
