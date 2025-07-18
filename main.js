@@ -92,6 +92,11 @@ function populateDisplay() {
 
     buttons.forEach(button => {
         button.addEventListener("click", (e) => {
+            buttons.forEach(button => {
+                if (["DEL"].includes(button.textContent)) {
+                    button.disabled = false;
+                }
+            })
             if (justEvaluated) {
                 if (/\d|\./.test(e.target.textContent)) {
                     display.textContent = e.target.textContent;
@@ -100,6 +105,15 @@ function populateDisplay() {
                 } else if (/[+\-*/]/.test(e.target.textContent)) {
                     justEvaluated = false;
                 }
+            }
+
+            if (e.target.textContent === "DEL") {
+                const lastChar = display.textContent.slice(-1);
+                if (lastChar === "+" || lastChar === "-" || lastChar === "*" || lastChar === "/") {
+                    toggleOperators(disableOperators = false, disableEquals, disableDot);
+                }
+                display.textContent = display.textContent.slice(0, -1);
+                return;
             }
 
             display.textContent += e.target.textContent;
@@ -140,6 +154,11 @@ function populateDisplay() {
                     display.textContent = "Error, cant divide by 0!"
                     toggleOperators(disableOperators = true, disableEquals = true, disableDot = true);
                     justEvaluated = true;
+                    buttons.forEach(button => {
+                        if (["DEL"].includes(button.textContent)) {
+                            button.disabled = true;
+                        }
+                    })
                 }
             }
 
@@ -165,8 +184,19 @@ function populateDisplay() {
                 display.textContent = "";
                 toggleOperators(disableOperators = true, disableEquals = true);
             }
-
         })
+    });
+
+    document.addEventListener("keydown", (e) => {
+        let key = e.key;
+
+        if (key === "Enter") key = "=";
+        if (key === "Backspace") key = "DEL";
+
+        const btn = [...buttons].find(button => button.textContent === key);
+        if (btn) {
+            btn.click();
+        }
     });
 };
 
