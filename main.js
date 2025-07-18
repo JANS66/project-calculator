@@ -1,17 +1,26 @@
+function formatResult(result) {
+    const rounded = Number(result.toFixed(2));
+    return Number.isInteger(rounded) ? rounded.toString() : rounded.toFixed(2);
+}
+
 function add(num1, num2) {
-    return +num1 + +num2;
+    let result = +num1 + +num2;
+    return formatResult(result);
 }
 
 function subtract(num1, num2) {
-    return +num1 - +num2;
+    let result = +num1 - +num2;
+    return formatResult(result);
 }
 
 function multiply(num1, num2) {
-    return +num1 * +num2;
+    let result = +num1 * +num2;
+    return formatResult(result);
 }
 
 function divide(num1, num2) {
-    return +num1 / +num2;
+    let result = +num1 / +num2;
+    return formatResult(result);
 }
 
 function operate(num1, operator, num2) {
