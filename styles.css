@@ -2,21 +2,55 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background-color: black;
 }
 
 button {
     min-width: 50px;
+    border-radius: 50px;
+    background-color: rgb(37, 37, 37);
+    border: none;
+}
+
+button:active {
+    background-color: #f5f5f516;
 }
 
 button,
 #display {
     min-height: 50px;
+    color: white;
+    font-size: 20px;
+}
+
+#divide:active,
+#multiply:active,
+#subtract:active,
+#add:active,
+#equals:active,
+#clear:active,
+#delete:active {
+    background-color: #f5f5f516;
+}
+
+#divide,
+#multiply,
+#subtract,
+#add,
+#equals {
+    background-color: rgba(255, 166, 0, 0.821)
 }
 
 #container,
 #calculator,
-#buttons {
+#buttons,
+#display {
     display: flex;
+}
+
+#clear,
+#delete {
+    background-color: dimgray;
 }
 
 #container,
@@ -47,6 +81,11 @@ button,
 
 #display {
     border: 2px solid indigo;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 10px 20px 10px 10px;
+    max-width: 300px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 #buttons {

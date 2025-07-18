@@ -107,6 +107,10 @@ function populateDisplay() {
                 }
             }
 
+            if (display.textContent.length >= 12 && !["DEL", "CLR"].includes(e.target.textContent)) {
+                return;
+            }
+
             if (e.target.textContent === "DEL") {
                 const lastChar = display.textContent.slice(-1);
                 if (lastChar === "+" || lastChar === "-" || lastChar === "*" || lastChar === "/") {
