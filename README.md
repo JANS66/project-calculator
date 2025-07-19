@@ -1,2 +1,4 @@
 # project-calculator
 Odin project calculator
+
+First when i started doing this project, i put myself into trap because of having a hard time breaking down problems in micro steps, because i put all of the logic in one event listener, but then because of i have knowledge of good coding practices, dry and one function does one thing, i rewrote all the code in to three main event listener where all logic happens, i used global variables and flags in order to keep track on states. Wasn't easy to figure out some places because i didn't take any breaks and i have hard time resting, its my problem because of that im having hard time solving more serious problems because of chaos in my head, that wouldn't be the problem if i would take breaks and restart. However after nights rest, today im here, and in my head i can see every step of my code, and next time i think i would tackle this project more easily.
