@@ -69,13 +69,15 @@ numberButtons.forEach(button => {
             if (current.includes(".")) return;
         }
 
-        display.textContent += digit;
-
         if (!operator) {
+            if (firstOperand.toString().length >= 12) return;
             firstOperand += digit;
+            display.textContent += digit;
         } else {
+            if (secondOperand.toString().length >= 12) return;
             secondOperand += digit;
             buildingSecondOperand = true;
+            display.textContent += digit;
         }
     });
 });
